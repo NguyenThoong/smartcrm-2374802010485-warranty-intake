@@ -49,6 +49,7 @@ smartcrm-2374802010485-warranty-intake/
 ├── .env.example            # Mẫu cấu hình biến môi trường
 ├── .gitignore              # Danh sách file/thư mục loại trừ khỏi Git
 └── README.md               # Tài liệu mô tả dự án
+```
 
 ## 6. Khai báo sử dụng công cụ AI
 | Công cụ | Dùng vào việc gì | Cách tự kiểm chứng |
