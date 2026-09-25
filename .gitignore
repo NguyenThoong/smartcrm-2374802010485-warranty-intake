@@ -1,0 +1,19 @@
+# Bí mật - KHÔNG BAO GIỜ commit
+.env
+
+# Dependencies & Build
+node_modules/
+dist/
+build/
+coverage/
+
+# Dữ liệu & CSV
+dataset/
+data/raw/
+*.csv
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
