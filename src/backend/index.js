@@ -1,26 +1,18 @@
-require('dotenv').config({ path: '../../.env' });
+require('dotenv').config();
 const express = require('express');
-const { Pool } = require('pg');
+const cors = require('cors');
+
+require('./config/db'); 
 
 const app = express();
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'smartcrm',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD,
+app.use(cors());
+app.use(express.json());
+
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'OK', message: 'SmartCRM Backend is running' });
 });
 
-app.get('/', (req, res) => res.send('Hello Smart CRM'));
-
-app.get('/db-check', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT NOW() AS server_time');
-    res.json({ status: 'OK', ...result.rows[0] });
-  } catch (err) {
-    res.status(500).json({ status: 'ERROR', message: err.message });
-  }
+const PORT = process.env.APP_PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });
-
-const port = process.env.APP_PORT || 3000;
-app.listen(port, () => console.log('Server chạy tại http://localhost:' + port));
