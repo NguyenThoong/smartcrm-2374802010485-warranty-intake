@@ -16,7 +16,7 @@ Hệ thống hỗ trợ nhân viên cửa hàng tiếp nhận thiết bị lỗi
 **Bảng thuật ngữ (Sử dụng thống nhất toàn tài liệu):**
 | Thuật ngữ | Diễn giải |
 |---|---|
-| **Ticket (Phiếu bảo hành)** | Chứng từ ghi nhận thông tin thiết bị lỗi, tình trạng tiếp nhận và mã theo dõi để giao cho khách hàng. |
+| **Ticket (Phiếu bảo hành)** | Chứng từ điện tử ghi nhận thông tin thiết bị lỗi, tình trạng tiếp nhận và mã số tra cứu để giao cho khách hàng. |
 | **SLA (Service Level Agreement)** | Thời hạn cam kết tối đa phải hoàn thành xử lý lỗi và trả máy cho khách. |
 | **Ngoại lệ (Exception)** | Các trường hợp máy trễ hạn bảo hành ngắn ngày hoặc rách tem cần sự phê duyệt đặc biệt từ Quản lý. |
 
@@ -40,7 +40,7 @@ Hệ thống hỗ trợ nhân viên cửa hàng tiếp nhận thiết bị lỗi
 
 **FR2: Phân loại và tính toán SLA tự động**
 - **US3 (MUST):** Là Tiếp tân, tôi muốn hệ thống tự động tính toán số ngày còn lại của hạn bảo hành để biết máy có hợp lệ hay không.
-- **US4 (MUST):** Là Hệ thống, tôi muốn tự động tính toán thời hạn SLA trả máy (ví dụ: 3 ngày, 5 ngày) dựa trên mức độ lỗi và loại thiết bị để hiển thị lên biên nhận.
+- **US4 (MUST):** Là Tiếp tân, tôi muốn xem thời hạn cam kết trả máy (SLA) được tính toán tự động để thông báo lịch hẹn chính xác cho khách.
 
 **FR3: Quản lý luồng xét duyệt ngoại lệ**
 - **US5 (MUST):** Là Quản lý cửa hàng, tôi muốn xem danh sách các yêu cầu bảo hành ngoại lệ để quyết định duyệt hay từ chối tiếp nhận.
@@ -60,6 +60,7 @@ Hệ thống hỗ trợ nhân viên cửa hàng tiếp nhận thiết bị lỗi
 - **NFR1 (Hiệu năng):** Thời gian phản hồi của API tra cứu thiết bị (theo IMEI) không được vượt quá **1.5 giây** với cơ sở dữ liệu lên đến **100.000 bản ghi**.
 - **NFR2 (Khả năng chịu tải):** Hệ thống backend phải chịu được tải đồng thời lên đến **50 yêu cầu tạo Ticket/giây** mà không bị ngắt kết nối (crash).
 - **NFR3 (Tính khả dụng):** Tỉ lệ thời gian hoạt động ổn định (Uptime) của phân hệ tiếp nhận phải đạt **99.9%** trong giờ hành chính (8:00 - 22:00) để không làm gián đoạn việc nhận máy của khách.
+- **NFR4 (Bảo mật & Phân quyền):** Đảm bảo 100% các API liên quan đến phê duyệt ngoại lệ phải được xác thực và cấp quyền đúng vai trò (Store Manager), từ chối truy cập (trả về lỗi 403) với các request sai quyền trong thời gian <= 200ms.
 
 ---
 
@@ -67,6 +68,7 @@ Hệ thống hỗ trợ nhân viên cửa hàng tiếp nhận thiết bị lỗi
 - **BR1:** Hệ thống KHÔNG được phép chuyển trạng thái Ticket sang "Hợp lệ" nếu số IMEI tra cứu không tồn tại trong lịch sử bán hàng của chuỗi, trừ khi có phê duyệt ngoại lệ từ Quản lý.
 - **BR2:** Thời gian cam kết (SLA) tiêu chuẩn cho các thiết bị di động phân khúc cao cấp là **tối đa 03 ngày làm việc**; các thiết bị khác là **05 ngày làm việc**.
 - **BR3:** Việc thay đổi trạng thái từ "Chờ duyệt ngoại lệ" sang "Đã tiếp nhận" CHỈ BẮT BUỘC được thực hiện bởi tài khoản có quyền Quản lý cửa hàng (Store Manager).
+- **BR4 (Ràng buộc mô tả sự cố):** Dữ liệu đầu vào của trường mô tả sự cố hư hỏng (issue_desc) bắt buộc phải có độ dài tối thiểu từ 10 ký tự trở lên.
 
 ---
 
