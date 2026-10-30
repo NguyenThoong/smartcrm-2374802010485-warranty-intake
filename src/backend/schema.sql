@@ -63,3 +63,17 @@ CREATE INDEX IF NOT EXISTS idx_customer_phone ON customer(phone);
 CREATE INDEX IF NOT EXISTS idx_device_serial ON device(serial_no);
 CREATE INDEX IF NOT EXISTS idx_ticket_status_due ON ticket(status, due_date);
 CREATE INDEX IF NOT EXISTS idx_log_ticket ON ticket_status_log(ticket_id, changed_at);
+
+
+-- 6. Nạp dữ liệu mẫu (Seed Data) - Chạy lại không bị lỗi nhân đôi
+INSERT INTO customer (full_name, phone, segment) 
+VALUES ('Trần Thị Bình', '0988765432', 'MOI') 
+ON CONFLICT (phone) DO NOTHING;
+
+INSERT INTO device (customer_id, serial_no, purchase_date, warranty_months) 
+VALUES (1, 'SN-IP-1122334', '2025-01-01', 12) 
+ON CONFLICT (serial_no) DO NOTHING;
+
+INSERT INTO technician (employee_id, center_id, level, is_active) 
+VALUES ('TECH-001', 1, 'L2', true) 
+ON CONFLICT (employee_id) DO NOTHING;

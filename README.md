@@ -70,41 +70,81 @@ smartcrm-2374802010485-warranty-intake/
 
 ## 6. Hướng dẫn cài đặt và khởi chạy
 
-**Bước 1: Chạy Backend (API Server)**
-Mở terminal, di chuyển vào thư mục backend, cài đặt thư viện và khởi chạy:
-```bash
+### Bước 1: Cấu hình cơ sở dữ liệu
+
+1.  Mở **pgAdmin 4** và tạo một Database trống có tên `smartcrm`.
+2.  Mở **Query Tool** của Database `smartcrm` vừa tạo.
+3.  Sao chép toàn bộ nội dung file `src/backend/schema.sql` vào Query
+    Tool.
+4.  Nhấn **F5** để khởi tạo các bảng và dữ liệu mẫu.
+
+### Bước 2: Cấu hình biến môi trường và chạy Backend
+
+Mở Terminal và di chuyển vào thư mục Backend, sau đó sao chép file cấu
+hình mẫu và cài đặt các thư viện cần thiết:
+
+``` bash
 cd src/backend
+cp .env.example .env
 npm install
+```
+
+Mở file `.env` vừa được tạo trong thư mục `src/backend`, sau đó điền
+`DB_USER` và `DB_PASSWORD` tương ứng với tài khoản PostgreSQL của bạn.
+
+Khởi chạy Backend bằng lệnh:
+
+``` bash
 npm run dev
 ```
-*(Backend sẽ hoạt động tại cổng 3000)*
 
-**Bước 2: Chạy Frontend (Giao diện người dùng)**
-Mở một terminal MỚI (vẫn giữ terminal backend đang chạy), cài đặt thư viện và khởi chạy:
-```bash
+Backend sẽ hoạt động tại địa chỉ:
+
+``` text
+http://localhost:3000
+```
+
+### Bước 3: Chạy Frontend (Giao diện người dùng)
+
+Mở **một Terminal mới** và giữ nguyên Terminal đang chạy Backend. Tiếp
+theo, di chuyển vào thư mục Frontend, cài đặt thư viện và khởi chạy ứng
+dụng:
+
+``` bash
 cd src/frontend
 npm install
 npm run dev
 ```
-*(Truy cập `http://localhost:5173` trên trình duyệt để sử dụng ứng dụng)*
 
-**Bước 3: Chạy Unit Test (Kiểm thử logic nghiệp vụ)**
-Mở terminal, di chuyển vào thư mục backend và chạy lệnh test:
-```bash
+Sau khi Frontend khởi chạy thành công, mở trình duyệt và truy cập:
+
+``` text
+http://localhost:5173
+```
+
+### Bước 4: Chạy Unit Test (Kiểm thử logic nghiệp vụ)
+
+Mở Terminal, di chuyển vào thư mục Backend và chạy lệnh kiểm thử:
+
+``` bash
 cd src/backend
 npm test
 ```
-*(Hệ thống sẽ chạy bộ test Jest và trả về kết quả PASS/FAIL)*
 
-## 7. Trạng thái hiện tại (Cập nhật Buổi 10)
+Hệ thống sẽ chạy **3 test cases Jest**, bao phủ các trường hợp luồng
+đúng, giá trị biên và trường hợp lỗi. Kết quả kiểm thử sẽ được hiển thị
+trong Terminal; các test cases đạt yêu cầu sẽ có trạng thái `PASS`.
 
-* [x] Chốt sơ đồ kiến trúc 4 lớp và tài liệu yêu cầu phi chức năng (NFR).
-* [x] Khởi tạo Cơ sở dữ liệu `smartcrm` trên PostgreSQL và nạp dữ liệu mẫu.
-* [x] Hoàn thành API CRUD cốt lõi cho Module Ticket: GET danh sách và POST tạo mới.
-* [x] **[Buổi 10]** Xây dựng hoàn chỉnh 3 màn hình Frontend (Danh sách, Tạo phiếu, Xét duyệt) bằng React/Vite có định tuyến Navigation.
-* [x] **[Buổi 10]** Xử lý triệt để 3 trạng thái giao diện (Đang tải, Rỗng, Lỗi kết nối).
-* [x] **[Buổi 10]** Tích hợp E2E thành công, dữ liệu luân chuyển thực tế từ CSDL lên giao diện.
-* [x] **[Buổi 10]** Viết 5 Unit Test bằng Jest cho quy tắc nghiệp vụ QT-05 (kiểm tra hạn bảo hành) đạt 100% PASS, bao gồm test case trường hợp biên.
+
+## 7. Trạng thái hiện tại (Cập nhật Buổi 12 – Hoàn thiện BT2)
+
+- [x] **[C1]** Hệ thống chuẩn hóa triển khai từ thư mục trống theo đúng hướng dẫn README.
+- [x] **[C2]** Kiến trúc phân tầng rõ ràng (Routes -> Controllers -> Services -> Repositories), Service độc lập hoàn toàn với req/res của Express.
+- [x] **[C4]** Bộ kiểm thử Jest Unit Test đạt 100% PASS cho 3 kịch bản cốt lõi: Luồng đúng (Happy path), Luồng biên (Boundary), và Dữ liệu lỗi (Invalid).
+- [x] **[C5]** Script CSDL đảm bảo tính lũy kế (Idempotency) bằng `CREATE TABLE IF NOT EXISTS` và `ON CONFLICT DO NOTHING`, chạy lại không lỗi và không nhân đôi dữ liệu.
+- [x] **[C7]** Xử lý ngoại lệ chặt chẽ, bắt lỗi vi phạm ràng buộc dữ liệu (DB constraints) rõ ràng, không làm sập ứng dụng.
+- [x] Giao diện ReactJS phản hồi đầy đủ 3 trạng thái: Đang tải (Loading), Danh sách rỗng (Empty), và Lỗi kết nối (Error).
+- [x] Ghi nhận nhật ký xử lý lỗi đầy đủ trong `docs/bug-log.md`.
 
 ## 8. Khai báo sử dụng công cụ AI
 
