@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_BASE_URL;
+const BASE = 'http://localhost:3000';
 
 export class ApiError extends Error {
     constructor(status, code, message) {
@@ -24,7 +24,9 @@ export async function request(path, options = {}) {
     try { body = await res.json(); } catch { /* ignore */ }
 
     if (!res.ok) {
-        throw new ApiError(res.status, body?.error, body?.message || 'Không kết nối được tới hệ thống. Vui lòng thử lại.');
+        // ĐÃ SỬA: Lấy trực tiếp thông báo lỗi từ body.error hoặc body.message để hiển thị chuẩn xác
+        const errorMsg = body?.error || body?.message || 'Không kết nối được tới hệ thống. Vui lòng thử lại.';
+        throw new ApiError(res.status, body?.code, errorMsg);
     }
     return body?.data ?? body;
 }

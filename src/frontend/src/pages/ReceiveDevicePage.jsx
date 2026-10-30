@@ -3,6 +3,7 @@ import { ticketsApi } from '../api/tickets.api';
 
 export default function ReceiveDevicePage() {
     const [formData, setFormData] = useState({
+        customerId: '',
         customerPhone: '',
         customerName: '',
         serialNo: '',
@@ -13,23 +14,63 @@ export default function ReceiveDevicePage() {
     const [submitting, setSubmitting] = useState(false);
     const [message, setMessage] = useState('');
 
-    const handleSearch = () => {
-        // Giả lập tra cứu, thực tế gọi API tra cứu khách hàng
-        setFormData(prev => ({ ...prev, customerName: 'Nguyễn Văn An (tự điền)' }));
-        if (formData.serialNo === 'SN-A52-778901') {
-            setWarning('Cảnh báo: Thiết bị SN-A52-778901 đã hết hạn bảo hành (QT-01).');
-        } else {
-            setWarning('');
+    const handleSearch = async () => {
+        if (!formData.customerPhone) {
+            setMessage('Vui lòng nhập số điện thoại để tra cứu.');
+            return;
+        }
+        
+        setMessage('Đang tra cứu...');
+        try {
+            const response = await fetch(`http://localhost:3000/api/customers?phone=${formData.customerPhone}`);
+            
+            if (!response.ok) {
+                throw new Error('Không tìm thấy khách hàng');
+            }
+            
+            const data = await response.json();
+            const customer = Array.isArray(data) ? data[0] : data;
+
+            if (customer && customer.full_name) {
+                // ĐÃ SỬA: Hỗ trợ lấy cả customer_id từ CSDL PostgreSQL
+                const realCustomerId = customer.id || customer.customer_id;
+                
+                setFormData(prev => ({ 
+                    ...prev, 
+                    customerName: customer.full_name,
+                    customerId: realCustomerId 
+                }));
+                setMessage('');
+                
+                if (formData.serialNo === 'SN-A52-778901') {
+                    setWarning('Cảnh báo: Thiết bị SN-A52-778901 đã hết hạn bảo hành (QT-01).');
+                } else {
+                    setWarning('');
+                }
+            } else {
+                setFormData(prev => ({ ...prev, customerName: '', customerId: '' }));
+                setMessage('Không tìm thấy khách hàng với số điện thoại này!');
+            }
+        } catch (error) {
+            console.error("Lỗi tra cứu:", error);
+            setFormData(prev => ({ ...prev, customerName: '', customerId: '' }));
+            setMessage('Lỗi kết nối hoặc không tồn tại khách hàng.');
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        if (!formData.customerId) {
+            setMessage('Vui lòng tra cứu và xác nhận khách hàng trước khi tạo phiếu.');
+            return;
+        }
+
         setSubmitting(true);
         try {
             await ticketsApi.tiepNhan(formData);
             setMessage('Tạo phiếu thành công!');
-            setFormData({ customerPhone: '', customerName: '', serialNo: '', issueDesc: '', priority: 'Trung bình' });
+            setFormData({ customerId: '', customerPhone: '', customerName: '', serialNo: '', issueDesc: '', priority: 'Trung bình' });
         } catch (error) {
             setMessage(`Lỗi: ${error.message}`);
         } finally {
@@ -73,7 +114,7 @@ export default function ReceiveDevicePage() {
                     <button type="button">Hủy</button>
                     <button type="submit" disabled={submitting}>Tạo phiếu</button>
                 </div>
-                {message && <p>{message}</p>}
+                {message && <p style={{ color: message.includes('Lỗi') || message.includes('Không') ? 'red' : 'green' }}>{message}</p>}
             </form>
         </section>
     );
