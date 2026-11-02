@@ -12,9 +12,13 @@ app.use(express.json());
 const ticketRoutes = require('./routes/ticketRoutes');
 app.use('/api/tickets', ticketRoutes);
 
-// MỚI THÊM: Khai báo API Khách hàng
+// Khai báo API Khách hàng
 const customerRoutes = require('./routes/customerRoutes');
 app.use('/api/customers', customerRoutes);
+
+// Khai báo API Thiết bị (UI-01 Tra cứu Serial/IMEI)
+const deviceRoutes = require('./routes/deviceRoutes');
+app.use('/api/devices', deviceRoutes);
 
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', message: 'SmartCRM Backend is running' });
