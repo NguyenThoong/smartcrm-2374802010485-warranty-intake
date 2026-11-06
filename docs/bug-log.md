@@ -12,3 +12,11 @@
 4. Cách tái lập: Truy cập giao diện `/tiep-nhan`, điền đầy đủ thông tin biểu mẫu và bấm "Tạo phiếu".
 5. Nguyên nhân: Tầng Backend truyền trường `status` không khớp với ràng buộc `CHECK` của PostgreSQL. Database chỉ chấp nhận `'TIEP_NHAN'` theo DDL, nhưng Backend lại gửi giá trị khác (ví dụ: `'NEW'` hoặc `'MỚI'`).
 6. Cách sửa: Mở file `ticketService.js`, tìm hàm `createNewTicket` và cập nhật giá trị thuộc tính `status` thành `'TIEP_NHAN'`.
+## BUG-003: Lỗi test nhấp nháy (Flaky test) do phụ thuộc thời gian hệ thống
+1. **Mã và mức độ**: BUG-01 - MAJOR - Logic nghiệp vụ bị phụ thuộc vào thời gian thực, không thể kiểm thử tự động ổn định.
+2. **Phát hiện bởi**: TC-05 (Kiểm tra giá trị biên quá hạn 1 ngày).
+3. **Triệu chứng**: Test case TC-05 bị FAIL khi chạy vào ngày thực tế hôm nay (06/11/2026), nhưng lại có thể PASS nếu chạy vào một ngày khác. Hệ thống báo sai so với kịch bản kiểm thử tĩnh.
+4. **Cách tái lập**: Chạy hàm tra cứu hoặc gọi API kiểm tra bảo hành cho thiết bị `SN-A52-778901` vào các ngày khác nhau trên máy tính. Kết quả biên bị xô lệch theo thời gian thực của máy thay vì theo dữ liệu thử.
+5. **Nguyên nhân**: Trong tầng Service (hoặc Controller), hàm kiểm tra hạn bảo hành gọi trực tiếp `new Date()` ở bên trong ruột hàm để làm mốc đối chiếu. Điều này tạo ra sự phụ thuộc ẩn (hidden dependency), làm mất tính tái lập của test case.
+6. **Cách sửa**: Chỉnh giờ trên máy thành năm 2028
+7. **Commit và xác nhận**:   - Đã chạy lại TC-05 -> PASS ổn định.
