@@ -3,9 +3,15 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src/backend # Chỉ định thư mục làm việc là backend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20', cache: 'npm' }
+        with: 
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'src/backend/package-lock.json' # Trỏ đúng vị trí file lock
       - run: npm ci
       - run: npm test
