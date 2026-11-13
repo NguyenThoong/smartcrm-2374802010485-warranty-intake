@@ -68,7 +68,30 @@ smartcrm-2374802010485-warranty-intake/
   * `DB_PASSWORD=...` (mật khẩu pgAdmin của bạn)
   * `APP_PORT=3000`
 
-## 6. Hướng dẫn cài đặt và khởi chạy
+## 🚀 Hướng dẫn chạy dự án với Docker
+
+1. Clone repository về máy:
+   ```bash
+   git clone https://github.com/NguyenThoong/smartcrm-2374802010485-warranty-intake.git
+   cd smartcrm-2374802010485-warranty-intake
+   ```
+
+2. Tạo file môi trường từ file mẫu:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Khởi chạy hệ thống bằng Docker Compose:
+   ```bash
+   docker compose up -d --build
+   ```
+
+4. Kiểm tra trạng thái các container:
+   ```bash
+   docker compose ps
+   ```
+
+## 6. Hướng dẫn cài đặt và khởi chạy (Thủ công / Local)
 
 ### Bước 1: Cấu hình cơ sở dữ liệu
 
@@ -135,18 +158,7 @@ Hệ thống sẽ chạy **3 test cases Jest**, bao phủ các trường hợp l
 đúng, giá trị biên và trường hợp lỗi. Kết quả kiểm thử sẽ được hiển thị
 trong Terminal; các test cases đạt yêu cầu sẽ có trạng thái `PASS`.
 
-
-## 7. Trạng thái hiện tại (Cập nhật Buổi 12 – Hoàn thiện BT2)
-
-- [x] **[C1]** Hệ thống chuẩn hóa triển khai từ thư mục trống theo đúng hướng dẫn README.
-- [x] **[C2]** Kiến trúc phân tầng rõ ràng (Routes -> Controllers -> Services -> Repositories), Service độc lập hoàn toàn với req/res của Express.
-- [x] **[C4]** Bộ kiểm thử Jest Unit Test đạt 100% PASS cho 3 kịch bản cốt lõi: Luồng đúng (Happy path), Luồng biên (Boundary), và Dữ liệu lỗi (Invalid).
-- [x] **[C5]** Script CSDL đảm bảo tính lũy kế (Idempotency) bằng `CREATE TABLE IF NOT EXISTS` và `ON CONFLICT DO NOTHING`, chạy lại không lỗi và không nhân đôi dữ liệu.
-- [x] **[C7]** Xử lý ngoại lệ chặt chẽ, bắt lỗi vi phạm ràng buộc dữ liệu (DB constraints) rõ ràng, không làm sập ứng dụng.
-- [x] Giao diện ReactJS phản hồi đầy đủ 3 trạng thái: Đang tải (Loading), Danh sách rỗng (Empty), và Lỗi kết nối (Error).
-- [x] Ghi nhận nhật ký xử lý lỗi đầy đủ trong `docs/bug-log.md`.
-
-## 8. Khai báo sử dụng công cụ AI
+## 7. Khai báo sử dụng công cụ AI
 
 | Công cụ | Dùng vào việc gì | Cách tự kiểm chứng | 
 | ----- | ----- | ----- | 
